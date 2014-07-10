@@ -1,0 +1,42 @@
+{
+  "name": "micronify",
+  "preferGlobal": "true",
+  "version": "0.0.1-1",
+  "author": "Tcha-Tcho",
+  "homepage": "http://micronify.com",
+  "description": "Micronify your code on-the-fly!",
+  "contributors": [
+    {
+      "name": "Eduardo Malpeli",
+      "email": "tchatcho66@hotmail.com"
+    }
+  ],
+  "subdomain": "admin",
+  "domains": [
+    "www.micronify.com"
+    ,"micronify.com"
+  ],
+  "bin": {},
+  "scripts": {
+    "start": "server/server.js"
+  },
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tcha-tcho/micronify.git"
+  },
+  "keywords": [
+    "Micronify"
+  ],
+  "dependencies": {
+    "uglify-js": "2.4.x"
+  },
+  "devDependencies": {
+  },
+  "analyze": "false",
+  "license": "MIT",
+  "engines": {
+    "npm": "1.1.x",
+    "node": "0.10.x"
+  }
+}
