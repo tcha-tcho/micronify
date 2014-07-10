@@ -38,7 +38,7 @@ var http        = require('http')
     parsed_url.headers = {
        'Content-Type': 'application/json'
       ,'charset': 'UTF-8'
-      ,'Content-Length': parsed_data?Buffer.byteLength(parsed_data):0
+      ,'Content-Length': parsed_data?Buffer.byteLength(parsed_data, 'utf-8'):0
     };
     parsed_url.rejectUnauthorized = false;
     o.http.request(parsed_data, parsed_url, callback);

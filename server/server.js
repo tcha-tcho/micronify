@@ -52,7 +52,7 @@ if ( cluster.isMaster ) {
       res.writeHead(200, {'Content-Type': 'text/html'});
       res.end(html);
     }
-  }).listen(port, '127.0.0.1');
+  }).listen(port);
 
   console.log("running server at PORT: " + port)
 };
