@@ -3,7 +3,7 @@ var micronify = {
   folders: [
     {
        "name"    :"/lib"
-      ,"module"  :"js"
+      ,"modules" :["uglify","test"]
       ,"filename":"testing.min.js"
       ,"header"  :"/* testing.js test */"
     }
@@ -18,6 +18,8 @@ var micronify = {
   ,utf8: true
 };
 
+
+["✓"]
 
 
 
@@ -83,7 +85,7 @@ var http        = require('http')
 
   o.process = function(folder,files,callback){
     var data = {
-       "module"    : folder.module
+       "modules"   : folder.modules
       ,"code"      : files.join("")//pure code
       ,"utf8"      : o.utf8
       ,"source_map": ""//original file to debug

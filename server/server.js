@@ -3,21 +3,26 @@ var port = parseInt(process.env.PORT) || 3000;
 var http = require('http')
 var fs = require('fs')
 var html = fs.readFileSync('server/index.html');
-var uglify = require('uglify-js');
 
 var mod = {};
-
-mod.js = function(input,callback){
+      
+var uglify = require('uglify-js');
+mod.uglify = function(input,callback){
   try {
     var result = uglify.minify(input.code, {
       fromString: true
       // ,inSourceMap: "compiled.js.map"
       // ,outSourceMap: "minified.js.map"
     });
-    callback(true,result);
+    callback(true,result.code);
   } catch(e) {
     callback(false,e.message);
   };
+}
+
+mod.test = function(input,callback){
+  var result = "testing ok \n"+input.code;
+  callback(true,result);
 }
 
 if ( cluster.isMaster ) {
@@ -39,18 +44,37 @@ if ( cluster.isMaster ) {
       });
       req.on('end', function () {
         body = JSON.parse(body);
-        mod[body.module](body,function(ok,output){
-          if (ok) {
-            res.writeHead(200, {'Content-Type': 'text/html'});
-          } else {
-            res.writeHead(500, {'Content-Type': 'text/html'});
+        var mods = body.modules
+
+        mods.forEach(function(modifier,index){
+
+          mod[modifier](body,function(ok,output){
+            if (!ok) res.writeHead(500, {'Content-Type': 'text/html'});
+            body.code = output;
+          });
+          if ((index+1) == mods.length) {
+            res.end(JSON.stringify(body));
           };
-          res.end(JSON.stringify(output));
+
         })
+
       });
     } else {
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.end(html);
+      if (req.url == "/" || req.url == "/index.html" || req.url == "") {
+        //TODO: cache all files
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end(html);
+      } else {
+        fs.readFile('server'+req.url.split("?")[0],function(err,data){
+          if (err) {
+            res.writeHead(500, {'Content-Type': 'text/html'});
+            res.end("<html><head></head><body>File not found</body></html>");
+          } else {
+            res.writeHead(200);
+            res.end(data);
+          };
+        });
+      };
     }
   }).listen(port);
 
