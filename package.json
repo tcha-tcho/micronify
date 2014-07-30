@@ -29,7 +29,8 @@
     "Micronify"
   ],
   "dependencies": {
-    "uglify-js": "2.4.x"
+     "coffee-script": "1.7.1"
+    ,"uglify-js": "2.4.x"
   },
   "devDependencies": {
   },

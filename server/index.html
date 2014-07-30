@@ -58,6 +58,15 @@
     text-align: center;
     margin-right: 5px;
   }
+  #form-sizes label{border:1px dotted #ccc;}
+  #header {width: 100%; height: 50px;}
+  #details li {
+    color:gray;
+    font-size: small;
+  }
+  #details li.error {
+    color: darkred;
+  }
 </style>
 </head><body>
 <!-- ===================================== END HEADER ===================================== -->
@@ -259,36 +268,10 @@
   <div class="col_6">
     <textarea id="code" name="code" style="display: none;"></textarea>
 
-    <ul id="web_type" class="tabs">
-      <li><a href="#form-javascript">javascript</a></li>
-      <li><a href="#form-html">HTML</a></li>
-      <li><a href="#form-css">CSS</a></li>
-    </ul>
-
-    <div id="form-javascript" class="tab-content">
-      <fieldset>
-      <legend>Modules</legend>
-      <input type="checkbox" name="modules[uglify]" id="uglify" checked /> <label for="check1" class="inline">Uglify</label><br />
-      <input type="checkbox" name="modules[jschecker]" id="jschecker" /> <label for="check2" class="inline">JSChecker</label><br />
-      <input type="checkbox" name="modules[beautify]" id="beautify" /> <label for="check2" class="inline">Beautify</label><br />
-      <input type="checkbox" name="modules[datefy" id="datefy" checked/> <label for="check3" class="inline">Datefy</label>
-      </fieldset>
-    </div>
-
-    <div id="form-html" class="tab-content">
-      <fieldset>
-      <legend>Modules</legend>
-      <input type="checkbox" name="modules[haml]" id="haml" checked /> <label for="check1" class="inline">haml</label><br />
-      </fieldset>
-    </div>
-
-    <div id="form-css" class="tab-content">
-      <fieldset>
-      <legend>Modules</legend>
-      <input type="checkbox" name="modules[sass]" id="sass" checked /> <label for="check1" class="inline">sass</label><br />
-      <input type="checkbox" name="modules[less]" id="less"  /> <label for="check1" class="inline">less</label><br />
-      </fieldset>
-    </div>
+    <ul id="web_type" class="tabs"></ul>
+    <div id="form-javascript" class="tab-content"></div>
+    <div id="form-html" class="tab-content"></div>
+    <div id="form-css" class="tab-content"></div>
 
     <label for="header">Header</label>
     <textarea id="header" name="header" placeholder="Optional"></textarea>
@@ -298,6 +281,51 @@
     <button id="send" class="large green icon-magic"> Submit</button>
 
     <script type="text/javascript">
+
+      var doc_mods = {
+        'javascript': [
+           ['coffeescript','']
+          ,['uglify','checked']
+          ,['jslint','']
+          ,['jshint','']
+          ,['beautify','']
+          ,['datefy','checked']
+        ]
+        ,'html': [
+           ['haml','checked']
+          ,['jade','']
+          ,['handlebars','']
+        ]
+        ,'css': [
+           ['sass','']
+          ,['less','']
+          ,['stylus','']
+          ,['minify','checked']
+        ]
+      };
+
+      function writeMods(target) {
+        var result = '<fieldset>';
+        var mods = doc_mods[target].reverse();
+        result += '<legend>Modules</legend>'
+        for (var i = mods.length - 1; i >= 0; i--) {
+          result += '<input type="checkbox" '
+                      +'name="modules['+mods[i][0]+']" '
+                      +'id="'+mods[i][0]+'" '+mods[i][1]+' />'
+                      +' <label class="inline">'+mods[i][0]+'</label><br />';
+        };
+        result += '</fieldset>';
+        document.getElementById('form-'+target).innerHTML = result;
+      }
+      function defineMods() {
+        var result = ""
+        for (target in doc_mods) {
+          result += '<li><a href="#form-'+target+'">'+target+'</a></li>'
+          writeMods(target)
+        };
+        document.getElementById('web_type').innerHTML = result;
+      }
+      defineMods();
 
       var ajax = function(opts) {
         function createCORSRequest(method, url, async) {
@@ -363,6 +391,21 @@
         doc_stats.innerHTML = stats;
       }
 
+      function makeDetails(mods) {
+        if (mods) {
+          var result = "<h4>Details</h4>"
+          for (mod in mods) {
+            result += '<li class="' + (mods[mod].error?"error":"") + '" >'
+            console.log(JSON.stringify(mods[mod]));
+            result += mod+": "+JSON.stringify(mods[mod]);
+            result += '</li>';
+          }
+          document.getElementById("details").innerHTML = result;
+        } else {
+          document.getElementById("details").innerHTML = "";
+        };
+      }
+
       var send = document.querySelectorAll("#send")[0]
       bind("click",send,function(){
         if (send.disabled != "disabled") {
@@ -393,11 +436,13 @@
               setSubmit(false)
               document.getElementById("response").innerHTML = res.code;
               makeStats(data.code.length,res.code.length);
+              makeDetails(res.modules);
               prettyPrint();
             }
             ,error: function(res){
               setSubmit(false)
               document.getElementById("response").innerHTML = res.code;
+              makeDetails(false);
             }
           })
         };
@@ -410,12 +455,8 @@
     <label for="response"><b>Return from server</b></label>
     <div id="stats"></div>
     <pre id="response"></pre>
+    <div id="details"></div>
   </div>
-
-  <style type="text/css">
-  #form-sizes label{border:1px dotted #ccc;}
-  #header {width: 100%; height: 50px;}
-  </style>
 </div>
 
 

@@ -5,7 +5,19 @@ var fs = require('fs')
 var html = fs.readFileSync('server/index.html');
 
 var mod = {};
-      
+
+//JAVASCRIPT      
+var coffeescript = require('coffee-script');
+mod.coffeescript = function(input,callback){
+  try {
+    var result = coffeescript.compile(input.code, {
+    });
+    callback({error: false, map: result.map},result);
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+}
+
 var uglify = require('uglify-js');
 mod.uglify = function(input,callback){
   try {
@@ -14,15 +26,15 @@ mod.uglify = function(input,callback){
       // ,inSourceMap: "compiled.js.map"
       // ,outSourceMap: "minified.js.map"
     });
-    callback(true,result.code);
+    callback({error: false, map: result.map},result.code);
   } catch(e) {
-    callback(false,e.message);
+    callback({error: e.message},input.code);
   };
 }
 
 mod.datefy = function(input,callback){
   var result = "// "+(new Date()).toGMTString()+" :-)\n"+input.code;
-  callback(true,result);
+  callback({error: false},result);
 }
 
 if ( cluster.isMaster ) {
@@ -58,18 +70,21 @@ if ( cluster.isMaster ) {
           body = hash;
         }
         var mods = body.modules
+        body.modules = {};
 
         mods.forEach(function(modifier,index){
 
           if (mod[modifier]) {
             try {
-              mod[modifier](body,function(ok,output){
-                if (!ok) res.writeHead(500, {'Content-Type': 'text/html'});
+              mod[modifier](body,function(details,output){
+                body.modules[modifier] = details;
                 body.code = output;
               });
             } catch (e) {
-              body.code = e;
+              body.modules[modifier] = {error: e};
             }
+          } else {
+            body.modules[modifier] = {error: "Not Available"};
           };
           if ((index+1) == mods.length) {
             var header = (body.header || "");
