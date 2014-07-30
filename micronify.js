@@ -3,7 +3,7 @@ var micronify = {
   folders: [
     {
        "name"    :"/lib"
-      ,"modules" :["uglify","test"]
+      ,"modules" :["uglify","datefy"]
       ,"filename":"testing.min.js"
       ,"header"  :"/* testing.js test */"
     }
@@ -18,8 +18,6 @@ var micronify = {
   ,utf8: true
 };
 
-
-["✓"]
 
 
 

@@ -20,8 +20,8 @@ mod.uglify = function(input,callback){
   };
 }
 
-mod.test = function(input,callback){
-  var result = "testing ok \n"+input.code;
+mod.datefy = function(input,callback){
+  var result = "// "+(new Date()).toGMTString()+" :-)\n"+input.code;
   callback(true,result);
 }
 
@@ -43,16 +43,37 @@ if ( cluster.isMaster ) {
         body += data;
       });
       req.on('end', function () {
-        body = JSON.parse(body);
+        try {
+          body = JSON.parse(decodeURIComponent(body));
+        } catch(e) {
+          var splits = body.split('&');
+          var hash = {};
+          for (i = 0; i < splits.length; i++) {
+            var iSplit = splits[i].split('=');
+            hash[iSplit[0]] = decodeURIComponent(iSplit[1]);
+            if (iSplit[0] == "modules") {
+              hash[iSplit[0]] = hash[iSplit[0]].split(",");
+            }
+          }
+          body = hash;
+        }
         var mods = body.modules
 
         mods.forEach(function(modifier,index){
 
-          mod[modifier](body,function(ok,output){
-            if (!ok) res.writeHead(500, {'Content-Type': 'text/html'});
-            body.code = output;
-          });
+          if (mod[modifier]) {
+            try {
+              mod[modifier](body,function(ok,output){
+                if (!ok) res.writeHead(500, {'Content-Type': 'text/html'});
+                body.code = output;
+              });
+            } catch (e) {
+              body.code = e;
+            }
+          };
           if ((index+1) == mods.length) {
+            var header = (body.header || "");
+            if (header) body.code = header+"\n"+body.code;
             res.end(JSON.stringify(body));
           };
 
@@ -63,6 +84,7 @@ if ( cluster.isMaster ) {
       if (req.url == "/" || req.url == "/index.html" || req.url == "") {
         //TODO: cache all files
         res.writeHead(200, {'Content-Type': 'text/html'});
+        html = fs.readFileSync('server/index.html');
         res.end(html);
       } else {
         fs.readFile('server'+req.url.split("?")[0],function(err,data){
