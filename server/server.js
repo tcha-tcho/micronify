@@ -32,6 +32,21 @@ mod.uglify = function(input,callback){
   };
 }
 
+
+var jslint = require('atropa-jslint');
+mod.jslint = function(input,callback){
+  try {
+    var result = jslint.JSLINT(input.code);
+    if(result) {
+      callback({error: false},input.code);
+    } else {
+      callback({error: jslint.JSLINT.errors},input.code);
+    }
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+}
+
 mod.datefy = function(input,callback){
   var result = "// "+(new Date()).toGMTString()+" :-)\n"+input.code;
   callback({error: false},result);
