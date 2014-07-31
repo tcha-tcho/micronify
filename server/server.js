@@ -8,7 +8,7 @@ var mod = {};
 
 //JAVASCRIPT      
 var coffeescript = require('coffee-script');
-mod.coffeescript = function(input,callback){
+mod.coffeescript = function(input,options,callback){
   try {
     var result = coffeescript.compile(input.code, {
     });
@@ -19,7 +19,7 @@ mod.coffeescript = function(input,callback){
 }
 
 var uglify = require('uglify-js');
-mod.uglify = function(input,callback){
+mod.uglify = function(input,options,callback){
   try {
     var result = uglify.minify(input.code, {
       fromString: true
@@ -34,7 +34,7 @@ mod.uglify = function(input,callback){
 
 
 var jslint = require('atropa-jslint');
-mod.jslint = function(input,callback){
+mod.jslint = function(input,options,callback){
   try {
     var result = jslint.JSLINT(input.code);
     if(result) {
@@ -47,7 +47,22 @@ mod.jslint = function(input,callback){
   };
 }
 
-mod.datefy = function(input,callback){
+var jshint = require("jshint");
+mod.jshint = function(input,options,callback){
+  try {
+    var hint = jshint.JSHINT;
+    if(hint(input.code)) {
+      callback({error: false},input.code);
+    } else {
+      var out = hint.data();
+      callback({error: out.errors},input.code);
+    }
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+}
+
+mod.datefy = function(input,options,callback){
   var result = "// "+(new Date()).toGMTString()+" :-)\n"+input.code;
   callback({error: false},result);
 }
@@ -79,27 +94,28 @@ if ( cluster.isMaster ) {
             var iSplit = splits[i].split('=');
             hash[iSplit[0]] = decodeURIComponent(iSplit[1]);
             if (iSplit[0] == "modules") {
-              hash[iSplit[0]] = hash[iSplit[0]].split(",");
+              hash[iSplit[0]] = JSON.parse(hash[iSplit[0]]);
             }
           }
           body = hash;
         }
+        console.log(body)
         var mods = body.modules
         body.modules = {};
 
         mods.forEach(function(modifier,index){
 
-          if (mod[modifier]) {
+          if (mod[modifier[0]]) {
             try {
-              mod[modifier](body,function(details,output){
-                body.modules[modifier] = details;
+              mod[modifier[0]](body,modifier[1],function(details,output){
+                body.modules[modifier[0]] = details;
                 body.code = output;
               });
             } catch (e) {
-              body.modules[modifier] = {error: e};
+              body.modules[modifier[0]] = {error: e};
             }
           } else {
-            body.modules[modifier] = {error: "Not Available"};
+            body.modules[modifier[0]] = {error: "Not Available"};
           };
           if ((index+1) == mods.length) {
             var header = (body.header || "");

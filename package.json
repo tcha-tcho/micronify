@@ -32,6 +32,7 @@
      "coffee-script": "1.7.1"
     ,"uglify-js": "2.4.x"
     ,"atropa-jslint": "0.1.x"
+    ,"jshint": "2.5.x"
   },
   "devDependencies": {
   },

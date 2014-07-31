@@ -452,11 +452,13 @@
           var doc_modules = document.querySelectorAll('#form-'+current+' input[type="checkbox"]:checked');
           data.modules = [];
           for (var i = doc_modules.length - 1; i >= 0; i--) {
-            data.modules.unshift(doc_modules[i].id);
+            data.modules.unshift([doc_modules[i].id]);
           };
           if (data.modules.length < 1) {
             alert("Sorry! You need to select at least one module.");
             return;
+          } else {
+            data.modules = JSON.stringify(data.modules);
           }
           data.code = document.getElementById("code").value
           if (!data.code) {
@@ -524,7 +526,10 @@ var micronify = {
   folders: [
     {
        "name"    :"/lib"
-      ,"modules" :["uglify","test"]
+      ,"modules" :[
+          ["uglify",{}]
+         ,["datefy"]
+       ]
       ,"filename":"testing.min.js"
       ,"header"  :"/* testing.js test */"
     }

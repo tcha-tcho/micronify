@@ -3,7 +3,10 @@ var micronify = {
   folders: [
     {
        "name"    :"/lib"
-      ,"modules" :["uglify","datefy"]
+      ,"modules" :[
+          ["uglify",{}]
+         ,["datefy"]
+       ]
       ,"filename":"testing.min.js"
       ,"header"  :"/* testing.js test */"
     }
