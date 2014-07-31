@@ -2,7 +2,7 @@
 var micronify = {
   folders: [
     {
-       "name"    :"/lib"
+       "name"    :"/test"
       ,"modules" :[
           ["uglify",{}]
          ,["datefy"]
