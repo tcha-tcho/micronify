@@ -10,6 +10,9 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="assets/js/kickstart.js"></script>
 <style type="text/css">
+  body {
+    background: lightcyan;
+  }
   #logo {
     height: 60px;
     float: left;
@@ -67,6 +70,13 @@
   #details li.error {
     color: darkred;
   }
+  #textcode {
+    width: 100%;
+  }
+  .callout {
+    background-image: url(/assets/background_with_clouds2.jpg);
+    background-size: 100%;
+  }
 </style>
 </head><body>
 <!-- ===================================== END HEADER ===================================== -->
@@ -78,8 +88,8 @@
 </nav>
 <div class="callout callout-top clearfix">
   <div class="grid">
-    <h1>The most easy way to post process your stuff</h1>
-    <h4>Ultra–Lean Uglify, Less, & JS Building steps<br />Hassle free! With only on document.</h4>
+    <h1>The easiest way to post-process your stuff</h1>
+    <h4>Ultra–Lean Uglify, Less, & JS Building steps<br />Hassle free! With only 1 json.</h4>
 
     <!--
     <div class="col_3">
@@ -117,7 +127,7 @@
 <!-- ===================================== 
   FORMS 
 ===================================== -->
-<h3 id="forms">Running on-line</h3>
+<h3 id="forms">Test on-line</h3>
 <ul class="tabs">
   <li><a href="#form-web">Web</a></li>
 </ul>
@@ -128,11 +138,15 @@
 
     <output id="list"></output>
     <div id="drop_zone">Drop files here</div>
-    or <input type="file" id="files" name="file" multiple />
-    <div id="progress_bar"><div class="percent">0%</div></div>
+    <big>or</big> 
+    <input type="file" id="files" name="file" multiple /> 
+    <!-- <div id="progress_bar"><div class="percent">0%</div></div> -->
+    <br>
+    <big>or</big>
+    <textarea placeholder="code here..." id="textcode"></textarea>
 
     <script>
-      var progress = document.querySelector('.percent');
+      // var progress = document.querySelector('.percent');
       var codes = {};
 
       var bind = function(event, element, callback) {
@@ -169,26 +183,49 @@
           var percentLoaded = Math.round((evt.loaded / evt.total) * 100);
           // Increase the progress bar length.
           if (percentLoaded < 100) {
-            progress.style.width = percentLoaded + '%';
-            progress.textContent = percentLoaded + '%';
+            // progress.style.width = percentLoaded + '%';
+            // progress.textContent = percentLoaded + '%';
           }
         }
       }
 
       function generateOutput() {
         var ordered = [];
-        for (code in codes) {
-          var order = Number(document.getElementById("file_"+code).value);
-          ordered[order] = codes[code][1];
+        var output = [];
+        for (var code in codes) {
+          var f = codes[code][0]
+          output.push('<li>'
+                +'<input id="file_'+f.name+'" type="text" value="' + f.order + '" >'
+                +'<strong>', escape(f.name), '</strong> <small>(', f.type || 'n/a', ')<br>',
+                f.size, ' bytes, last modified: ',
+                f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                '</small>'
+              +'</li>');
         };
+        //TODO: ID conflit
+        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+        bindInputEvents();
+        function applyCode(order) {
+          if (ordered[order]) {
+            order ++;
+            applyCode(order)
+          } else {
+            ordered[order] = codes[code][1];
+          };
+        }
+        for (var code in codes) {
+          var order = Number(document.getElementById("file_"+code).value);
+          applyCode(order);
+        };
+        console.log(ordered)
         //TODO: ID conflit
         document.getElementById("code").value = ordered.join("\n");
       };
 
       function handleFileReader(filename,file,lastone) {
         // Reset progress indicator on new file selection.
-        progress.style.width = '0%';
-        progress.textContent = '0%';
+        // progress.style.width = '0%';
+        // progress.textContent = '0%';
 
         var reader = new FileReader();
         reader.onerror = errorHandler;
@@ -201,8 +238,8 @@
         };
         reader.onload = function(e) {
           // Ensure that the progress bar displays 100% at the end.
-          progress.style.width = '100%';
-          progress.textContent = '100%';
+          // progress.style.width = '100%';
+          // progress.textContent = '100%';
           // setTimeout("document.getElementById('progress_bar').className='';", 2000);
           codes[filename] = [file,reader.result];
           if (lastone) generateOutput();
@@ -225,25 +262,12 @@
 
         // var files = evt.dataTransfer.files; // FileList object.
         var files = evt.target.files; // FileList object.
-        if (!files) {
-          files = evt.dataTransfer.files;
-        };
+        if (!files) files = evt.dataTransfer.files;
 
-        // files is a FileList of File objects. List some properties.
-        var output = [];
         for (var i = 0, f; f = files[i]; i++) {
-          output.push('<li>'
-                        +'<input id="file_'+f.name+'" type="text" value="' + i + '" >'
-                        +'<strong>', escape(f.name), '</strong> <small>(', f.type || 'n/a', ')<br>',
-                        f.size, ' bytes, last modified: ',
-                        f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                        '</small>'
-                      +'</li>');
+          f.order = i;
           handleFileReader(f.name, f, (i+1 == files.length));
         }
-        //TODO: ID conflit
-        document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-        bindInputEvents();
       }
 
       function handleDragOver(evt) {
@@ -257,6 +281,20 @@
       var dropZone = document.getElementById('drop_zone');
       dropZone.addEventListener('dragover', handleDragOver, false);
       dropZone.addEventListener('drop', handleFileSelect, false);
+
+      var textcode = document.getElementById("textcode");
+      bind("keyup",textcode,function(){
+        var code = textcode.value;
+        codes.textcode = [{
+           name:"textcode"
+          ,order: 0
+          ,size: code.length
+          ,type:"n/a"
+          ,lastModifiedDate: (new Date())
+        }, code];
+        generateOutput();
+      })
+
 
       //TODO: ID conflit
       document.getElementById('files').addEventListener('change', handleFileSelect, false);
@@ -467,7 +505,7 @@
 <!-- ===================================== 
   INSTRUCTIONS 
 ===================================== -->
-<h3>Running on your project</h3>
+<h3>Install</h3>
 <ul class="tabs">
 <li><a href="#nodejs">Node.js</a></li>
 <li><a href="#python">Python</a></li>
