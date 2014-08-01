@@ -34,6 +34,7 @@
     ,"atropa-jslint": "0.1.x"
     ,"jshint": "2.5.x"
     ,"js-beautify": "1.5.x"
+    ,"haml": "0.2.x"
   },
   "devDependencies": {
   },

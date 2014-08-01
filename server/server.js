@@ -51,15 +51,15 @@ if ( cluster.isMaster ) {
         mods.forEach(function(modifier,index){
 
           if (mod[modifier[0]]) {
-            try {
+            // try {
               var options = utils.extend(mod.defaults[modifier[0]],modifier[1]);
               mod[modifier[0]](body,options,function(details,output){
                 body.modules[modifier[0]] = details;
                 body.code = output;
               });
-            } catch (e) {
-              body.modules[modifier[0]] = {error: e};
-            }
+            // } catch (e) {
+              // body.modules[modifier[0]] = {error: e};
+            // }
           } else {
             body.modules[modifier[0]] = {error: "Not Available"};
           };
