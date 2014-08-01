@@ -3,7 +3,7 @@ var mods = {};
 var haml = require('hamljs');
 mods.haml = function(input,options,callback){
   try {
-    var result = haml.render(input.code);
+    var result = haml.render(input.code,options);
     callback({error: false},result);
   } catch(e) {
     callback({error: e.message},input.code);
