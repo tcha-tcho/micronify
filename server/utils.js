@@ -13,6 +13,7 @@ utils.extend = function() {
 
 utils.fixed_JSON = function(json_str) {
   json_str = (json_str || "{}");
+  if (json_str == "undefined") json_str = "{}";
   return json_str.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ');
 };
 

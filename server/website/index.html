@@ -303,10 +303,9 @@
       })
 
       var doc_options = document.getElementById("options");
-      var options;
+      var mod_options;
       bind("keyup",doc_options,function(){
-        options = doc_options.value;
-        generateOutput();
+        mod_options = doc_options.value;
       })
 
 
@@ -344,7 +343,7 @@
           ,['datefy','checked']
         ]
         ,'html': [
-           ['haml','checked']
+           ['haml','']
           ,['jade','']
           ,['ejs','']
           ,['mustache','']
@@ -480,8 +479,7 @@
             alert("Sorry! You need to select files.");
             return;
           }
-          console.log(options);
-          data.options = options;
+          data.options = mod_options;
           var header = document.getElementById("header").value;
           if (header) data.header = header;
           setSubmit(true);
