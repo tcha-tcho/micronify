@@ -45,6 +45,9 @@ mods.defaults = {
     ,customAttrAssign:[]
     ,customAttrSurround:[]
   }
+  ,"sass": {
+    outputStyle: "compressed" //nested
+  }
 };
 
 module.exports = mods;

@@ -1,5 +1,12 @@
 var mods = {};
 
+
+mods.not_available = function(input,options,callback){
+  callback({error: "Not Available"}, input.code);
+}
+
+
+
 var coffeescript = require('coffee-script');
 mods.coffeescript = function(input,options,callback){
   try {

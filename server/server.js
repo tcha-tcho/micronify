@@ -51,29 +51,26 @@ if ( cluster.isMaster ) {
         var mods = body.modules
         body.modules = {};
         body.options = (body.options || {});
+        var index = 0;
 
-        mods.forEach(function(modifier,index){
-
-          if (mod[modifier]) {
-            // try {
-              var options = utils.extend(mod.defaults[modifier],body.options[modifier]);
-              mod[modifier](body,options,function(details,output){
-                body.modules[modifier] = details;
-                body.code = output;
-              });
-            // } catch (e) {
-              // body.modules[modifier] = {error: e};
-            // }
-          } else {
-            body.modules[modifier] = {error: "Not Available"};
-          };
-          if ((index+1) == mods.length) {
-            var header = (body.header || "");
-            if (header) body.code = header+"\n"+body.code;
-            res.end(JSON.stringify(body));
-          };
-
-        })
+        function process_mod() {
+          var modifier = mods[index];
+          var use_mod = !mod[modifier]?"not_available":modifier;
+          var options = utils.extend(mod.defaults[modifier],body.options[modifier]);
+          mod[use_mod](body,options,function(details,output){
+            body.modules[modifier] = details;
+            body.code = output;
+            if ((index+1) == mods.length) {
+              var header = (body.header || "");
+              if (header) body.code = header+"\n"+body.code;
+              res.end(JSON.stringify(body));
+            } else {
+              index ++;
+              process_mod();
+            };
+          });
+        };
+        process_mod();
 
       });
     } else {
