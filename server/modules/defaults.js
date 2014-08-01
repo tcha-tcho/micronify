@@ -21,6 +21,30 @@ mods.defaults = {
     ,before: "<!-- "
     ,after: " -->\n"
   }
+  ,"html_minifier": {
+     removeComments:true
+    ,removeCommentsFromCDATA:false
+    ,removeCDATASectionsFromCDATA:false
+    ,collapseWhitespace:true
+    ,conservativeCollapse:false
+    ,collapseBooleanAttributes:true
+    ,removeAttributeQuotes:true
+    ,removeRedundantAttributes:true
+    ,useShortDoctype:true
+    ,removeEmptyAttributes:true
+    ,removeOptionalTags:true
+    ,removeEmptyElements:false
+    ,lint:false
+    ,keepClosingSlash:false
+    ,caseSensitive:false
+    ,minifyJS:false
+    ,minifyCSS:true
+    ,ignoreCustomComments:false
+    ,processScripts:false
+    ,maxLineLength:false
+    ,customAttrAssign:[]
+    ,customAttrSurround:[]
+  }
 };
 
 module.exports = mods;

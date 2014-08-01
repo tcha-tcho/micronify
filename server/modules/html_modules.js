@@ -42,6 +42,28 @@ mods.mustache = function(input,options,callback){
   };
 };
 
+var handlebars = require("handlebars");
+mods.handlebars = function(input,options,callback){
+  try {
+    var template = handlebars.compile(input.code);
+    var result = template(options);
+    callback({error: false},result);
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+};
+
+
+var html_minifier = require('html-minifier').minify;
+mods.html_minifier = function(input,options,callback){
+  try {
+    var result = html_minifier(input.code, options);
+    callback({error: false},result);
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+}
+
 var beautify_html = require('js-beautify').html;
 mods.beautify_html = function(input,options,callback){
   try {
