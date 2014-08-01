@@ -1,19 +1,16 @@
 var mods = {};
 
-var haml = require('haml');
+var haml = require('hamljs');
 mods.haml = function(input,options,callback){
-  // try {
-    console.log(haml.render,input.code);
+  try {
     var result = haml.render(input.code);
-    console.log(result)
     callback({error: false},result);
-  // } catch(e) {
-  //   console.log(e)
-  //   callback({error: e.message},input.code);
-  // };
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
 }
 
-mods.haml_js = function(input,options,callback){
+mods.haml_compile = function(input,options,callback){
   try {
     var result = haml.compile(input.code, options);
     callback({error: false},result);
@@ -21,5 +18,8 @@ mods.haml_js = function(input,options,callback){
     callback({error: e.message},input.code);
   };
 }
+// haml.filters.my_filter = function(str) {
+//   return doSomethingWith(str)
+// }
 
 module.exports = mods;

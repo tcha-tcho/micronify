@@ -331,7 +331,7 @@
         ]
         ,'html': [
            ['haml','checked']
-          ,['haml_js','']
+          ,['haml_compile','']
           ,['jade','']
           ,['handlebars','']
         ]
@@ -475,7 +475,7 @@
             ,data: data
             ,success: function(res){
               setSubmit(false)
-              document.getElementById("response").innerHTML = res.code;
+              document.getElementById("response")[("innerText" || "textContent")] = res.code;
               makeStats(data.code.length,res.code.length);
               makeDetails(res.modules);
               prettyPrint();
