@@ -48,6 +48,9 @@ mods.defaults = {
   ,"sass": {
     outputStyle: "compressed" //nested
   }
+  ,"sass_scss": {
+    outputStyle: "compressed" //nested
+  }
 };
 
 module.exports = mods;
