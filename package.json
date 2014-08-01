@@ -35,6 +35,9 @@
     ,"jshint": "2.5.x"
     ,"js-beautify": "1.5.x"
     ,"hamljs": "0.6.x"
+    ,"jade": "1.5.x"
+    ,"ejs": "1.0.x"
+    ,"mustache": "0.8.x"
   },
   "devDependencies": {
   },

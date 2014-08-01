@@ -73,6 +73,10 @@
   #textcode {
     width: 100%;
   }
+  #options {
+    width: 100%;
+    height: 40px;
+  }
   .callout {
     background-image: url(/website/background_with_clouds2.jpg);
     background-size: 100%;
@@ -144,6 +148,10 @@
     <br>
     <big>or</big>
     <textarea placeholder="code here..." id="textcode"></textarea>
+    <br>
+    <br>
+    <div>Options <small style="color:#c9c9c9;">optional</small></div>
+    <textarea placeholder="{ejs:{locals:{test:'HUE'}}}" id="options"></textarea>
 
     <script>
       // var progress = document.querySelector('.percent');
@@ -217,7 +225,6 @@
           var order = Number(document.getElementById("file_"+code).value);
           applyCode(order);
         };
-        console.log(ordered)
         //TODO: ID conflit
         document.getElementById("code").value = ordered.join("\n");
       };
@@ -295,6 +302,13 @@
         generateOutput();
       })
 
+      var doc_options = document.getElementById("options");
+      var options;
+      bind("keyup",doc_options,function(){
+        options = doc_options.value;
+        generateOutput();
+      })
+
 
       //TODO: ID conflit
       document.getElementById('files').addEventListener('change', handleFileSelect, false);
@@ -331,9 +345,12 @@
         ]
         ,'html': [
            ['haml','checked']
-          ,['haml_compile','']
           ,['jade','']
+          ,['ejs','']
+          ,['mustache','']
           ,['handlebars','']
+          ,['beautify_html','']
+          ,['datefy_html','checked']
         ]
         ,'css': [
            ['sass','']
@@ -435,7 +452,6 @@
           var result = "<h4>Details</h4>"
           for (mod in mods) {
             result += '<li class="' + (mods[mod].error?"error":"") + '" >'
-            console.log(JSON.stringify(mods[mod]));
             result += mod+": "+JSON.stringify(mods[mod]);
             result += '</li>';
           }
@@ -458,14 +474,14 @@
           if (data.modules.length < 1) {
             alert("Sorry! You need to select at least one module.");
             return;
-          } else {
-            data.modules = JSON.stringify(data.modules);
           }
           data.code = document.getElementById("code").value
           if (!data.code) {
             alert("Sorry! You need to select files.");
             return;
           }
+          console.log(options);
+          data.options = options;
           var header = document.getElementById("header").value;
           if (header) data.header = header;
           setSubmit(true);
@@ -528,9 +544,12 @@ var micronify = {
     {
        "name"    :"/lib"
       ,"modules" :[
-          ["uglify",{}]
-         ,["datefy"]
+          "uglify"
+         ,"datefy"
        ]
+      ,"options": {
+        "datefy": {"before":"// HUE! "}
+      }
       ,"filename":"testing.min.js"
       ,"header"  :"/* testing.js test */"
     }

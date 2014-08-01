@@ -4,11 +4,14 @@ var micronify = {
     {
        "name"    :"/test"
       ,"modules" :[
-          ["uglify",{}]
-         ,["datefy"]
+          "uglify"
+         ,"datefy"
        ]
       ,"filename":"testing.min.js"
       ,"header"  :"/* testing.js test */"
+      ,"options" : {
+        "uglify": {}
+      }
     }
     // {
     //    "name"    :"/old_files"

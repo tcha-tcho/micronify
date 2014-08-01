@@ -16,6 +16,11 @@ mods.defaults = {
     ,before: "// "
     ,after: "\n"
   }
+  ,"datefy_html": {
+     method: "toGMTString"
+    ,before: "<!-- "
+    ,after: " -->\n"
+  }
 };
 
 module.exports = mods;

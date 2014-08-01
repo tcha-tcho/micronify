@@ -32,7 +32,7 @@ if ( cluster.isMaster ) {
       });
       req.on('end', function () {
         try {
-          body = JSON.parse(decodeURIComponent(body));
+          body = JSON.parse(utils.fixed_JSON(decodeURIComponent(body)));
         } catch(e) {
           var splits = body.split('&');
           var hash = {};
@@ -40,28 +40,32 @@ if ( cluster.isMaster ) {
             var iSplit = splits[i].split('=');
             hash[iSplit[0]] = decodeURIComponent(iSplit[1]);
             if (iSplit[0] == "modules") {
-              hash[iSplit[0]] = JSON.parse(hash[iSplit[0]]);
-            }
-          }
+              hash[iSplit[0]] = hash[iSplit[0]].split(",");
+            };
+            if (iSplit[0] == "options") {
+              hash[iSplit[0]] = JSON.parse(utils.fixed_JSON(hash[iSplit[0]]));
+            };
+          };
           body = hash;
         }
         var mods = body.modules
         body.modules = {};
+        body.options = (body.options || {});
 
         mods.forEach(function(modifier,index){
 
-          if (mod[modifier[0]]) {
+          if (mod[modifier]) {
             // try {
-              var options = utils.extend(mod.defaults[modifier[0]],modifier[1]);
-              mod[modifier[0]](body,options,function(details,output){
-                body.modules[modifier[0]] = details;
+              var options = utils.extend(mod.defaults[modifier],body.options[modifier]);
+              mod[modifier](body,options,function(details,output){
+                body.modules[modifier] = details;
                 body.code = output;
               });
             // } catch (e) {
-              // body.modules[modifier[0]] = {error: e};
+              // body.modules[modifier] = {error: e};
             // }
           } else {
-            body.modules[modifier[0]] = {error: "Not Available"};
+            body.modules[modifier] = {error: "Not Available"};
           };
           if ((index+1) == mods.length) {
             var header = (body.header || "");
