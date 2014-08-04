@@ -21,6 +21,11 @@ mods.defaults = {
     ,before: "<!-- "
     ,after: " -->\n"
   }
+  ,"datefy_css": {
+     method: "toGMTString"
+    ,before: "/* "
+    ,after: " */\n"
+  }
   ,"html_minifier": {
      removeComments:true
     ,removeCommentsFromCDATA:false

@@ -43,6 +43,7 @@
     ,"node-sass": "0.9.x"
     ,"less": "1.7.x"
     ,"stylus": "0.47.x"
+    ,"clean-css": "2.2.x"
   },
   "devDependencies": {
   },

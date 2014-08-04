@@ -50,4 +50,19 @@ mods.beautify_css = function(input,options,callback){
   };
 }
 
+var minify_css = require('clean-css');
+mods.minify_css = function(input,options,callback){
+  try {
+    var result = new minify_css().minify(input.code);
+    callback({error: false},result);
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+}
+
+mods.datefy_css = function(input,options,callback){
+  var result = options.before+(new Date())[options.method]()+options.after+input.code;
+  callback({error: false},result);
+}
+
 module.exports = mods;
