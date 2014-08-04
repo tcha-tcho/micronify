@@ -17,4 +17,16 @@ mods.sass_scss = function(input,options,callback){
   });
 };
 
+var less = require('less');
+mods.less = function(input,options,callback){
+  //TODO: less options?
+  less.render(input.code, function (e, css) {
+    if (e) {
+      callback({error: e},input.code);
+    } else {
+      callback({error: false},css);
+    };
+  });
+};
+
 module.exports = mods;
