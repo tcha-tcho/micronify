@@ -42,6 +42,7 @@
     ,"html-minifier": "0.6.x"
     ,"node-sass": "0.9.x"
     ,"less": "1.7.x"
+    ,"stylus": "0.47.x"
   },
   "devDependencies": {
   },

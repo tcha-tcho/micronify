@@ -29,4 +29,25 @@ mods.less = function(input,options,callback){
   });
 };
 
+var stylus = require('stylus');
+mods.stylus = function(input,options,callback){
+  stylus.render(input.code, options, function(err, css){
+    if (err) {
+      callback({error: err},input.code);
+    } else {
+      callback({error: false},css);
+    };
+  });
+};
+
+var beautify_css = require('js-beautify').css;
+mods.beautify_css = function(input,options,callback){
+  try {
+    var result = beautify_css(input.code, options);
+    callback({error: false},result);
+  } catch(e) {
+    callback({error: e.message},input.code);
+  };
+}
+
 module.exports = mods;
