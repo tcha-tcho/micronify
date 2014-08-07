@@ -197,9 +197,13 @@
         }
       }
 
-      function generateOutput() {
+      function generateOutput(evt) {
         var ordered = [];
         var output = [];
+        if (evt) {
+          var new_order = parseInt(evt.target.value);
+          codes[evt.target.id.substr(5)][0].order = new_order;
+        };
         for (var code in codes) {
           var f = codes[code][0]
           output.push('<li>'
