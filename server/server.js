@@ -31,23 +31,28 @@ if ( cluster.isMaster ) {
         body += data;
       });
       req.on('end', function () {
-        try {
-          body = JSON.parse(utils.fixed_JSON(decodeURIComponent(body)));
-        } catch(e) {
-          var splits = body.split('&');
-          var hash = {};
-          for (i = 0; i < splits.length; i++) {
-            var iSplit = splits[i].split('=');
-            hash[iSplit[0]] = decodeURIComponent(iSplit[1]);
-            if (iSplit[0] == "modules") {
-              hash[iSplit[0]] = hash[iSplit[0]].split(",");
-            };
-            if (iSplit[0] == "options") {
-              hash[iSplit[0]] = JSON.parse(utils.fixed_JSON(hash[iSplit[0]]));
-            };
-          };
-          body = hash;
-        }
+        // try {
+		try {	
+			body = JSON.parse(body);
+		} catch(e) {
+			try{
+            	body = JSON.parse(utils.fixed_JSON(decodeURIComponent(body)));
+			} catch(e) {
+				var splits = body.split('&');
+			  	var hash = {};
+			  	for (i = 0; i < splits.length; i++) {
+					var iSplit = splits[i].split('=');
+					hash[iSplit[0]] = decodeURIComponent(iSplit[1]);
+					if (iSplit[0] == "modules") {
+					  hash[iSplit[0]] = hash[iSplit[0]].split(",");
+					};
+					if (iSplit[0] == "options") {
+					  hash[iSplit[0]] = JSON.parse(utils.fixed_JSON(hash[iSplit[0]]));
+					};
+			  	};
+			  body = hash;
+			}
+		}
         var mods = body.modules
         body.modules = {};
         body.options = (body.options || {});
